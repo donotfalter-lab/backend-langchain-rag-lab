@@ -16,13 +16,24 @@ def create_app():
     def ask():
         """Accept a question and return a source-backed LangChain RAG response."""
 
-        # TODO: Get the JSON body with request.get_json(silent=True).
-        # TODO: Validate the question with validate_question_payload().
-        # TODO: Return validation errors as JSON with HTTP 400.
-        # TODO: Call answer_question(question) for valid requests.
-        # TODO: Return successful responses as JSON with HTTP 200.
-        # TODO: Convert LangChainServiceError into a structured HTTP 502 response.
-        raise NotImplementedError("Complete the POST /api/ask route.")
+        payload = request.get_json(silent=True)
+        question, error = validate_question_payload(payload)
+        if error:
+            return jsonify(error), 400
+
+        try:
+            response = answer_question(question)
+        except LangChainServiceError as service_error:
+            return (
+                jsonify(
+                    format_error_response(
+                        "langchain_service_error", str(service_error)
+                    )
+                ),
+                502,
+            )
+
+        return jsonify(response), 200
 
     return app
 

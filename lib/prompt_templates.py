@@ -11,12 +11,23 @@ procedures, metrics, or incident steps.
 Keep the response concise, specific, and useful to an engineer during an incident.
 """
 
+HUMAN_PROMPT = """
+Approved retrieved context:
+{context}
+
+Question:
+{question}
+"""
+
 
 def build_rag_prompt():
     """Build the reusable LangChain prompt template for RAG answers."""
 
-    # TODO: Import ChatPromptTemplate from langchain_core.prompts.
-    # TODO: Return a ChatPromptTemplate with:
-    # - a system message containing SYSTEM_PROMPT
-    # - a human message that includes both {context} and {question}
-    raise NotImplementedError("Build and return a ChatPromptTemplate.")
+    from langchain_core.prompts import ChatPromptTemplate
+
+    return ChatPromptTemplate.from_messages(
+        [
+            ("system", SYSTEM_PROMPT.strip()),
+            ("human", HUMAN_PROMPT.strip()),
+        ]
+    )
